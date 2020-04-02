@@ -4,6 +4,57 @@
 
 #include <bayes/TestingClassifier.h>
 
+multimap<vector<int>, vector<vector<int>>> TestingClassifier::test_classifier(
+    multimap<int, vector<vector<int>>> image_labels_features,
+    map<int, vector<vector<double>>> feature_probabilities,
+    const map<int, double>& class_probabilities) {
+
+  map<int, vector<vector<vector<int>>>> probabilityData;
+  // Initializing map with values
+
+  for (int i = 0; i < kNumLabels; i++) {
+    vector<vector<vector<int>>> imgVector;
+    probabilityData.insert(make_pair(i, imgVector));
+  }
+
+  int labelForClass = 0;
+  vector<vector<int>> labelForImage;
+  // For loop is adding values from image_labels_features to probabilityData
+  // to use for computation
+  for (auto & iterateFeatures : image_labels_features) {
+    labelForClass = iterateFeatures.first;
+    labelForImage = iterateFeatures.second;
+
+    probabilityData[labelForClass].push_back(labelForImage);
+  }
+
+  // Uses map which used values of best estimate and actual label assigned to
+  // image
+  multimap<vector<int>, vector<vector<int>>> bestEstimates;
+
+  // Analyzes each image in map
+  for (auto & iterateMap : probabilityData) {
+    int label = iterateMap.first;
+    vector<vector<vector<int>>> imgVector = iterateMap.second;
+
+    // Finding best estimate values for images
+    for (int j = 0; j < imgVector.size(); j++) {
+      vector<vector<int>> image = imgVector[j];
+      int bestEstimateValue =
+          compute_highest_posterior_probability(image,
+                                                feature_probabilities,class_probabilities);
+      vector<int> valOfClass;
+
+      valOfClass.push_back(bestEstimateValue);
+      valOfClass.push_back(label);
+
+      bestEstimates.insert(pair <vector<int>,
+          vector<vector<int>>>(valOfClass, image));
+    }
+  }
+  return bestEstimates;
+}
+
 int TestingClassifier::compute_highest_posterior_probability(vector<vector<int>> image,
     map<int, vector<vector<double>>> featureProbabilities,
     map <int, double> classProbabilities) {
@@ -90,54 +141,4 @@ int TestingClassifier::compute_highest_posterior_probability(vector<vector<int>>
     }
   }
   return currentClass;
-}
-multimap<vector<int>, vector<vector<int>>> TestingClassifier::test_classifier(
-    multimap<int, vector<vector<int>>> image_labels_features,
-    map<int, vector<vector<double>>> feature_probabilities,
-    const map<int, double>& class_probabilities) {
-
-  map<int, vector<vector<vector<int>>>> probabilityData;
-  // Initializing map with values
-
-  for (int i = 0; i < kNumLabels; i++) {
-    vector<vector<vector<int>>> imgVector;
-    probabilityData.insert(make_pair(i, imgVector));
-  }
-
-  int labelForClass = 0;
-  vector<vector<int>> labelForImage;
-  // For loop is adding values from image_labels_features to probabilityData
-  // to use for computation
-  for (auto & iterateFeatures : image_labels_features) {
-    labelForClass = iterateFeatures.first;
-    labelForImage = iterateFeatures.second;
-
-    probabilityData[labelForClass].push_back(labelForImage);
-  }
-
-  // Uses map which used values of best estimate and actual label assigned to
-  // image
-  multimap<vector<int>, vector<vector<int>>> bestEstimates;
-
-  // Analyzes each image in map
-  for (auto & iterateMap : probabilityData) {
-    int label = iterateMap.first;
-    vector<vector<vector<int>>> imgVector = iterateMap.second;
-
-    // Finding best estimate values for images
-    for (int j = 0; j < imgVector.size(); j++) {
-      vector<vector<int>> image = imgVector[j];
-      int bestEstimateValue =
-          compute_highest_posterior_probability(image,
-              feature_probabilities,class_probabilities);
-      vector<int> valOfClass;
-
-      valOfClass.push_back(bestEstimateValue);
-      valOfClass.push_back(label);
-
-      bestEstimates.insert(pair <vector<int>,
-          vector<vector<int>>>(valOfClass, image));
-    }
-  }
-  return bestEstimates;
 }
