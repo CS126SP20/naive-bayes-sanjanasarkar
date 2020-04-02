@@ -16,7 +16,7 @@ using namespace std;
 class InputTrainingData {
 
  public:
-  int kImageDimension = 28;
+  const int kImageDimension = 28;
   /**
    * Method used to read in training data and put into a multimap based on
    * image and the number the image is supposed to represent
@@ -25,8 +25,8 @@ class InputTrainingData {
    * @param labelsFile Training data file containing labels for images
    * @return Multimap containing training images and corresponding number
    */
-  multimap <vector<vector<char>>, int> read_training_files(string imagesFile,
-      string labelsFile);
+  multimap <int, vector<vector<char>>> read_training_files(const string& imagesFile,
+      const string& labelsFile);
 
   /**
    * Turning image pixels into features used for training model
@@ -34,8 +34,8 @@ class InputTrainingData {
    * @param images_and_labels Multimap containing training images and labels
    * @return Multimap containing features for images and corresponding number
    */
-  multimap <vector<vector<int>>, int>
-  pixels_to_features(multimap <vector<vector<char>>, int> images_and_labels);
+  multimap <int, vector<vector<int>>>
+  pixels_to_features(multimap <int, vector<vector<char>>> images_and_labels);
 };
 
 #endif  // NAIVEBAYES_INPUTTRAININGDATA_H

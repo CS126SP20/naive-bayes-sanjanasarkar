@@ -4,19 +4,19 @@
 
 #include <bayes/InputTrainingData.h>
 
-multimap <vector<vector<int>>, int>
-InputTrainingData::pixels_to_features(multimap <vector<vector<char>>, int>
+multimap <int, vector<vector<int>>>
+InputTrainingData::pixels_to_features(multimap <int, vector<vector<char>>>
                                       images_and_labels) {
-  multimap <vector<vector<int>>, int> images_and_labels_features;
+  multimap <int, vector<vector<int>>> images_and_labels_features;
 
   // Code for map iterator from http://www.cplusplus.com/forum/beginner/218111/
   for (auto iterateMap = images_and_labels.begin();
        iterateMap != images_and_labels.end(); iterateMap++) {
 
-    vector<vector<char>> image = iterateMap->first;
-    int label = iterateMap->second;
+    int label = iterateMap->first;
+    vector<vector<char>> image = iterateMap->second;
 
-    vector<vector<int> > imageFeatures(kImageDimension,
+    vector<vector<int>> imageFeatures(kImageDimension,
                                        vector<int>(kImageDimension));
 
     for (int i = 0; i < kImageDimension; i++) {
@@ -35,17 +35,17 @@ InputTrainingData::pixels_to_features(multimap <vector<vector<char>>, int>
         }
       }
     }
-    images_and_labels_features.insert(pair <vector<vector<int>>, int>
-                                          (imageFeatures, label));
+    images_and_labels_features.insert(pair <int, vector<vector<int>>>
+                                          (label, imageFeatures));
   }
   return images_and_labels_features;
 }
 
-multimap <vector<vector<char>>, int>
-    InputTrainingData::read_training_files(string imagesFile,
-        string labelsFile) {
+multimap <int, vector<vector<char>>>
+    InputTrainingData::read_training_files(const string& imagesFile,
+        const string& labelsFile) {
   // Multimap to store images and labels read in from file
-  multimap <vector<vector<char>>, int> images_and_labels;
+  multimap <int, vector<vector<char>>> images_and_labels;
 
   // Reading files
   ifstream readLabelFile;
@@ -79,8 +79,8 @@ multimap <vector<vector<char>>, int>
           completeImage[i][j] = imagePixelChar;
       }
     }
-    images_and_labels.insert(pair <vector<vector<char>>, int> (completeImage,
-        imageLabel));
+    images_and_labels.insert(pair <int, vector<vector<char>>> (imageLabel,
+        completeImage));
   }
 
   return images_and_labels;
