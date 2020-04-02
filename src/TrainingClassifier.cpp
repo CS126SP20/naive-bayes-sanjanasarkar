@@ -101,4 +101,3 @@ map<int, vector<vector<double>>>
   }
     return featureProbability;
 }
-#include "bayes/TrainingClassifier.h"

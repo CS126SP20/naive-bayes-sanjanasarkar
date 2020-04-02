@@ -85,4 +85,3 @@ multimap <int, vector<vector<char>>>
 
   return images_and_labels;
 }
-#include "bayes/InputTrainingData.h"
